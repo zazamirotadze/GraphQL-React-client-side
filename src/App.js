@@ -1,25 +1,48 @@
-import logo from './logo.svg';
 import './App.css';
+import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
+
+import {useState, useEffect} from 'react';
+
+
+
+
 
 function App() {
+
+  const [zaza, setZaza] = useState("")
+  const client = new ApolloClient({
+    uri: 'https://flyby-gateway.herokuapp.com/',
+    cache: new InMemoryCache(),
+  });
+
+  // const client = ...
+  useEffect(() => {
+    client
+    .query({
+      query: gql`
+        query GetLocations {
+          locations {
+            id
+            name
+            description
+            photo
+          }
+        }
+      `,
+    })
+    .then((result) =>  setZaza(result.data.locations.map((element) => <li key={element.id}>{element.description}</li>) ));
+    
+  }, [0]);
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <div className="App">
+        {zaza && zaza}
+      </div>
+    
   );
 }
 
 export default App;
+
